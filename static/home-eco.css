@@ -1,0 +1,33 @@
+/* Оформление «Природа»: светло-зелёная рамка, белая карточка, добрые иллюстрации (глобус, лампочка, росток) */
+:root {
+  --bg: #f4f8f1; --ink: #21493c; --muted: #58796b;
+  --panel: #ffffff; --panel-ink: #21493c; --panel-muted: #63867a; --panel-line: #dbead4;
+  --panel-shadow: 0 12px 34px rgba(60,110,70,.14);
+  --field-bg: #f5faf2; --field-line: #cfe3c8;
+  --accent: #3a9a6c; --accent-2: #74c08a; --on-accent: #fff; --accent-soft: rgba(116,192,138,.2);
+  --radius: 26px;
+  --font-head: 'Avenir Next Rounded', 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+body { background: #f4f8f1; }
+.eco-frame { position: fixed; inset: 0; z-index: 50; pointer-events: none; border: clamp(10px, 2.2vw, 24px) solid #b9d8ad; border-radius: 0; }
+.deco { position: absolute; z-index: 3; pointer-events: none; }
+.hero { position: relative; max-width: 940px; margin: 0 auto; padding: clamp(44px, 8vw, 78px) 16px 16px; text-align: center; }
+.hero-copy { position: relative; z-index: 4; padding: 0 clamp(0px, 15vw, 170px); animation: up .8s ease both; }
+.label { display: inline-block; padding: 6px 16px; border-radius: 999px; background: #dcefd3; color: #2f7d58; font: 700 .78rem var(--font-head); letter-spacing: .14em; text-transform: uppercase; }
+.hero h1 { margin: 16px auto 0; max-width: 11em; color: #21493c; font: 800 clamp(2rem, 6.4vw, 3.6rem)/1.05 var(--font-head); }
+.lead { margin: 14px auto 0; max-width: 26em; color: #58796b; font-size: clamp(1rem, 2.5vw, 1.18rem); line-height: 1.5; }
+.globe { left: clamp(6px, 4vw, 56px); top: clamp(40px, 7vw, 70px); width: clamp(84px, 16vw, 150px); animation: bob 6s ease-in-out infinite; }
+.bulb { right: clamp(6px, 5vw, 70px); top: clamp(40px, 6vw, 64px); width: clamp(64px, 12vw, 110px); animation: bob 7s ease-in-out infinite reverse; filter: drop-shadow(0 0 16px rgba(255,236,140,.7)); }
+.spin { transform-origin: 75px 75px; animation: spin 40s linear infinite; }
+.sway { transform-box: fill-box; transform-origin: 50% 100%; animation: leaf 4s ease-in-out infinite; }
+.sprout { position: fixed; left: clamp(20px, 4vw, 60px); bottom: clamp(22px, 4vw, 44px); width: clamp(70px, 10vw, 130px); z-index: 1; }
+.vine { position: fixed; right: clamp(20px, 4vw, 60px); bottom: clamp(20px, 4vw, 40px); width: clamp(120px, 20vw, 240px); z-index: 1; }
+@keyframes bob { 50% { transform: translateY(-10px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes leaf { 50% { transform: rotate(6deg); } }
+.page { z-index: 4; }
+.panel { border-width: 2px; }
+.badge { background: linear-gradient(135deg, #3a9a6c, #74c08a); }
+.go { background: linear-gradient(120deg, #3a9a6c, #74c08a); }
+.hero h1, .step h2 { font-weight: 800; }
+@media (max-width: 640px) { .hero-copy { margin-top: clamp(70px, 20vw, 100px); } .globe { top: 20px; } .bulb { top: 22px; } }

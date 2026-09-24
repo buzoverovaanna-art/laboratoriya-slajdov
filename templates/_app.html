@@ -1,0 +1,239 @@
+<form method="post" action="/create" id="f" class="panel form">
+
+  <section class="step">
+    <header><span class="badge">1</span><h2>Кто делает презентацию?</h2></header>
+    <div class="who">
+      {% for s in students %}
+      <label class="pick">
+        <input type="radio" name="student" value="{{ s.id }}" {{ 'checked' if f.get('student') == s.id }} required>
+        <span class="box">
+          <span class="avatar">{{ s.name[0] }}</span>
+          <span class="who-name"><b>{{ s.surname }} {{ s.name }}</b><small>{{ s.class }} класс</small></span>
+        </span>
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="step">
+    <header><span class="badge">2</span><h2>По какому предмету презентация?</h2></header>
+    <div class="chips">
+      {% for x in subjects %}
+      <label class="chip"><input type="radio" name="subject" value="{{ x }}" {{ 'checked' if f.get('subject') == x }} required><span>{{ x }}</span></label>
+      {% endfor %}
+      <label class="chip"><input type="radio" name="subject" value="__other" {{ 'checked' if f.get('subject') == '__other' }}><span>✏️ Другой — впишу сама</span></label>
+    </div>
+    <div class="field" id="subject-other" hidden>
+      <label class="cap" for="subject_other">Напиши предмет</label>
+      <input type="text" name="subject_other" id="subject_other" maxlength="40" value="{{ f.get('subject_other', '') }}" placeholder="Например: Окружающий мир" autocomplete="off">
+    </div>
+    <p class="hint">Он будет написан на первом слайде рядом с твоим именем.</p>
+  </section>
+
+  <section class="step">
+    <header><span class="badge">3</span><h2>Откуда взять материал?</h2></header>
+    <div class="seg">
+      <label><input type="radio" name="source" value="topic" {{ 'checked' if source == 'topic' }}><span class="pill">Своя тема — найди сам</span></label>
+      <label><input type="radio" name="source" value="text" {{ 'checked' if source == 'text' }}><span class="pill">Вставлю текст или фото</span></label>
+    </div>
+
+    <div class="field" data-src="topic text">
+      <label class="cap" for="topic" id="topic-cap">О чём презентация?</label>
+      <input type="text" name="topic" id="topic" value="{{ f.get('topic', '') }}" maxlength="120"
+             placeholder="Например: Причины Французской революции" autocomplete="off">
+    </div>
+
+    <p class="note" data-src="topic">🌐 ИИ сам поищет по всему интернету (энциклопедии, школьные порталы и другие сайты), выберет подходящие статьи и сделает по ним презентацию. Сайты с готовыми ответами, видео и соцсети он не берёт. Под слайдом «Выводы» будут ссылки, откуда взято. Сайты бывают неточными — важное сверяй с учебником.</p>
+
+    <div class="src-box" data-src="text" hidden>
+      <div class="field">
+        <label class="cap" for="text">Вставь сюда текст параграфа или добавь фото и файлы</label>
+        <textarea name="text" id="text" rows="7" maxlength="40000" placeholder="Скопируй текст из учебника и вставь сюда…&#10;Или нажми «＋» и выбери фото страниц, PDF или документ.">{{ f.get('text', '') }}</textarea>
+      </div>
+      <div class="attach">
+        <button type="button" id="add-file" class="plus"><b>＋</b> Добавить фото или файл</button>
+        <input type="file" id="file-input" accept="image/*,.pdf,.txt,.docx" multiple hidden>
+        <span id="attach-status" class="attach-status" aria-live="polite"></span>
+      </div>
+      <p class="hint">Фото страниц, PDF, Word (.docx) и TXT. Текст прочитает твой компьютер, файлы никуда не сохраняются. Прочитанное появится в поле выше, его можно поправить.</p>
+    </div>
+  </section>
+
+  <section class="step">
+    <header><span class="badge">4</span><h2>Сколько слайдов?</h2></header>
+    <div class="count">
+      <button type="button" id="minus" aria-label="Меньше">−</button>
+      <input type="range" name="slides" id="slides" min="{{ min_slides }}" max="{{ max_slides }}" value="{{ slides }}">
+      <button type="button" id="plus" aria-label="Больше">+</button>
+      <output id="slides-out" for="slides">{{ slides }}</output>
+    </div>
+    <p class="hint">от {{ min_slides }} до {{ max_slides }} · первый слайд — с твоим именем, последний — «Выводы»</p>
+  </section>
+
+  <section class="step">
+    <header><span class="badge">5</span><h2>Выбери стиль</h2></header>
+    <div class="styles">
+      {% for c in cards %}
+      <label class="pick style">
+        <input type="radio" name="style" value="{{ c.id }}" {{ 'checked' if c.id == selected and c.ready }} {{ '' if c.ready else 'disabled' }}>
+        <span class="box">
+          <span class="emoji">{{ c.emoji }}</span>
+          <span class="name">{{ c.name }}</span>
+          <span class="tag">{{ c.tagline }}</span>
+        </span>
+        {% if not c.ready %}<span class="soon">скоро</span>{% endif %}
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="step">
+    <header><span class="badge">6</span><h2>Добавить игру? <small class="opt">по желанию</small></h2></header>
+    <div class="styles">
+      <label class="pick style">
+        <input type="checkbox" name="games" value="team" {{ 'checked' if 'team' in games_checked }}>
+        <span class="box"><span class="emoji">🕵️</span><span class="name">Игра для класса</span><span class="tag">Класс делится на 2 команды и отвечает на вопросы по теме — учитель ведёт счёт.</span></span>
+      </label>
+    </div>
+    <p class="hint">Игра появится отдельным слайдом «Игровая зона» перед «Выводами» и добавит ещё около полминуты.</p>
+  </section>
+
+  {% if error %}<p class="err" role="alert">{{ error }}</p>{% endif %}
+  {% if not ai_ready %}<p class="note">🧪 ИИ пока не подключён — получится демо-презентация с заготовками вместо настоящих текстов.</p>
+  {% else %}<p class="hint">🧪 Презентацию пишет {{ ai_name }}. Факты лучше сверить с учебником.</p>{% endif %}
+  <button class="go" type="submit" id="go"><span>Создать презентацию</span></button>
+</form>
+
+<div id="loading" class="loading" hidden aria-live="polite">
+  <div class="lab-card">
+    <div class="flask" aria-hidden="true">🧪<i></i><i></i><i></i></div>
+    <p class="lab-title">Лаборатория колдует…</p>
+    <p class="lab-step" id="lab-step">Читаю тему</p>
+    <p class="lab-hint">Это займёт около минуты. Не закрывай страницу.</p>
+  </div>
+</div>
+
+<section class="panel shelf">
+  <header><h2>Мои работы</h2></header>
+  {% if works %}
+  <ul class="works">
+    {% for w in works %}
+    <li>
+      <a href="/w/{{ w.file }}">
+        <span class="t">{{ w.topic }}</span>
+        <span class="m">{{ w.subject }}{{ ' · ' if w.subject }}{{ w.author }}{{ ' · ' if w.author }}{{ w.style_name }} · {{ w.slides }} сл. · {{ w.created }}</span>
+      </a>
+      {% if w.can_add and 'team' not in w.games %}
+      <details class="add-game">
+        <summary title="Добавить игру">＋ Игра</summary>
+        <form method="post" action="/games/{{ w.id }}" class="add-game-form">
+          <button name="game" value="team">🕵️ Игра для класса</button>
+        </form>
+      </details>
+      {% endif %}
+      {% if w.middle_slides %}
+      <details class="add-game">
+        <summary title="Переделать один слайд">↻ Слайд</summary>
+        <form method="post" action="/works/{{ w.id }}/regenerate" class="add-game-form">
+          <select name="slide" required>
+            {% for i, title in w.middle_slides %}
+            <option value="{{ i }}">{{ i + 1 }}. {{ title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">↻ Переделать</button>
+        </form>
+      </details>
+      {% endif %}
+      <a class="dl" href="/dl/{{ w.file }}" download title="Скачать файл — можно передать на флешку или открыть на другом компьютере" aria-label="Скачать презентацию «{{ w.topic }}»">⬇</a>
+      <a class="dl dl-pdf" href="/pdf/{{ w.file }}" download title="Скачать PDF — для сдачи учителю. Первый раз собирается около минуты"
+         aria-label="Скачать PDF «{{ w.topic }}»" onclick="this.textContent='⏳'; setTimeout(() => this.textContent='PDF', 90000)">PDF</a>
+      <form method="post" action="/delete/{{ w.id }}" class="del"
+            data-msg="Удалить презентацию «{{ w.topic }}»? Вернуть её будет нельзя."
+            onsubmit="return confirm(this.dataset.msg)">
+        <button type="submit" title="Удалить" aria-label="Удалить презентацию «{{ w.topic }}»">🗑</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">Пока пусто. Создай первую презентацию — она появится здесь.</p>
+  {% endif %}
+</section>
+
+<script>
+(function () {
+  var f = document.getElementById('f');
+  var src = f.elements['source'];
+  function mode() { return f.querySelector('input[name=source]:checked').value; }
+  function syncSource() {
+    var m = mode();
+    f.querySelectorAll('[data-src]').forEach(function (el) { el.hidden = el.dataset.src.split(' ').indexOf(m) < 0; });
+    f.topic.required = true;
+    f.text.required = (m === 'text');
+    document.getElementById('topic-cap').textContent = m === 'text' ? 'О чём этот текст?' : 'О чём презентация?';
+  }
+  f.querySelectorAll('input[name=source]').forEach(function (r) { r.addEventListener('change', syncSource); });
+  syncSource();
+
+  function syncSubject() {
+    var v = f.querySelector('input[name=subject]:checked');
+    var other = !!v && v.value === '__other';
+    document.getElementById('subject-other').hidden = !other;
+    f.subject_other.required = other;
+  }
+  f.querySelectorAll('input[name=subject]').forEach(function (r) { r.addEventListener('change', syncSubject); });
+  syncSubject();
+
+  // плюсик: фото и файлы -> текст в поле
+  var fileInput = document.getElementById('file-input'), status = document.getElementById('attach-status'), area = document.getElementById('text');
+  document.getElementById('add-file').addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () {
+    if (!fileInput.files.length) return;
+    var fd = new FormData();
+    Array.prototype.forEach.call(fileInput.files, function (file) { fd.append('files', file); });
+    var n = fileInput.files.length;
+    status.className = 'attach-status busy';
+    status.textContent = 'Читаю ' + n + (n === 1 ? ' файл…' : ' файлов…') + ' Это займёт несколько секунд.';
+    fetch('/extract', { method: 'POST', body: fd }).then(function (r) { return r.json(); }).then(function (data) {
+      var ok = data.files.filter(function (x) { return !x.error; }), bad = data.files.filter(function (x) { return x.error; });
+      if (data.text) {
+        var cur = area.value.trim();
+        area.value = (cur ? cur + '\n\n' : '') + data.text;
+        if (area.value.length > +area.maxLength) area.value = area.value.slice(0, +area.maxLength);
+      }
+      var msg = ok.length ? 'Прочитано: ' + ok.length + ' · ' + area.value.length + ' знаков в поле. ' : '';
+      status.className = 'attach-status' + (bad.length ? ' warn' : ' ok');
+      status.textContent = msg + bad.map(function (x) { return x.name + ': ' + x.error; }).join(' ');
+    }).catch(function () {
+      status.className = 'attach-status warn'; status.textContent = 'Не получилось связаться с приложением. Попробуй ещё раз.';
+    }).then(function () { fileInput.value = ''; });
+  });
+
+  var range = document.getElementById('slides'), out = document.getElementById('slides-out');
+  function setN(n) { n = Math.max(+range.min, Math.min(+range.max, n)); range.value = n; out.textContent = n; }
+  range.addEventListener('input', function () { setN(+range.value); });
+  document.getElementById('minus').onclick = function () { setN(+range.value - 1); };
+  document.getElementById('plus').onclick = function () { setN(+range.value + 1); };
+
+  var phrases = {
+    topic: ['Ищу материал в интернете', 'Читаю статьи', 'Выбираю главное', 'Придумываю заголовки', 'Рисую слайды', 'Пишу шпаргалку'],
+    text: ['Читаю твой текст', 'Выбираю главное', 'Придумываю заголовки', 'Рисую слайды', 'Пишу шпаргалку']
+  };
+  f.addEventListener('submit', function () {
+    var b = document.getElementById('go'); b.disabled = true; b.querySelector('span').textContent = 'Создаю…';
+    var list = phrases[mode()] || phrases.topic, i = 0, el = document.getElementById('lab-step');
+    el.textContent = list[0];
+    document.getElementById('loading').hidden = false;
+    setInterval(function () { i = Math.min(i + 1, list.length - 1); el.textContent = list[i] + '…'; }, 6000);
+  });
+  document.querySelectorAll('.add-game-form').forEach(function (fm) {
+    fm.addEventListener('submit', function (e) {
+      document.getElementById('lab-step').textContent = fm.action.indexOf('/regenerate') >= 0 ? 'Переделываю слайд' : 'Придумываю вопросы для игры';
+      document.getElementById('loading').hidden = false;
+    });
+  });
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) { document.getElementById('loading').hidden = true; var b = document.getElementById('go'); b.disabled = false; b.querySelector('span').textContent = 'Создать презентацию'; }
+  });
+})();
+</script>

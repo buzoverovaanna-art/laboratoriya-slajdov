@@ -1,0 +1,62 @@
+<section class="panel form" id="plan">
+  <header><h2>Проверь план — {{ plan.slides|length + 2 }} слайдов</h2></header>
+  {% if error %}<p class="err" role="alert">{{ error }}</p>{% endif %}
+  <p class="hint">ИИ придумал заголовки. Их можно поправить прямо тут — тексты и картинки ИИ подберёт уже под них. Слайд 1 — титул, последний — «Выводы» (их ИИ соберёт сам).</p>
+
+  <form method="post" action="/create/confirm" id="planForm">
+    <input type="hidden" name="student" value="{{ f.student }}">
+    <input type="hidden" name="subject" value="{{ f.subject }}">
+    <input type="hidden" name="style" value="{{ f.style }}">
+    <input type="hidden" name="slides" value="{{ f.slides }}">
+    <input type="hidden" name="source" value="{{ f.source }}">
+    <input type="hidden" name="topic" value="{{ f.topic }}">
+    {% for g in f.games %}<input type="hidden" name="games" value="{{ g }}">{% endfor %}
+    <textarea name="text" hidden>{{ f.text }}</textarea>
+    <textarea name="material" hidden>{{ plan.material.material if plan.material else "" }}</textarea>
+    {% if plan.material %}{% for src in plan.material.sources %}<input type="hidden" name="material_sources" value="{{ src }}">{% endfor %}{% endif %}
+
+    <div class="field">
+      <label class="cap" for="plan_title">Слайд 1 · Название презентации</label>
+      <input type="text" name="plan_title" id="plan_title" value="{{ plan.title }}" maxlength="90" required>
+    </div>
+    <div class="field">
+      <label class="cap" for="plan_subtitle">Подзаголовок</label>
+      <input type="text" name="plan_subtitle" id="plan_subtitle" value="{{ plan.subtitle }}" maxlength="120">
+    </div>
+    {% for t in plan.slides %}
+    <div class="field">
+      <label class="cap">Слайд {{ loop.index + 1 }}</label>
+      <input type="text" name="plan_slide" value="{{ t }}" maxlength="110" required>
+    </div>
+    {% endfor %}
+    <div class="field">
+      <label class="cap">Слайд {{ plan.slides|length + 2 }} · Выводы</label>
+      <p class="hint" style="margin-top:0">ИИ сам подведёт итог по всей презентации.</p>
+    </div>
+
+    <button class="go" type="submit" id="planGo"><span>Создать презентацию</span></button>
+  </form>
+  <a href="/" class="hint" style="display:inline-block;margin-top:14px">← Начать заново</a>
+</section>
+
+<div id="loading" class="loading" hidden aria-live="polite">
+  <div class="lab-card">
+    <div class="flask" aria-hidden="true">🧪<i></i><i></i><i></i></div>
+    <p class="lab-title">Лаборатория колдует…</p>
+    <p class="lab-step">Пишу тексты по плану, ищу картинки</p>
+    <p class="lab-hint">Это займёт около минуты. Не закрывай страницу.</p>
+  </div>
+</div>
+
+<script>
+document.getElementById('planForm').addEventListener('submit', function () {
+  var b = document.getElementById('planGo'); b.disabled = true; b.querySelector('span').textContent = 'Создаю…';
+  document.getElementById('loading').hidden = false;
+});
+window.addEventListener('pageshow', function (e) {
+  if (e.persisted) {
+    document.getElementById('loading').hidden = true;
+    var b = document.getElementById('planGo'); b.disabled = false; b.querySelector('span').textContent = 'Создать презентацию';
+  }
+});
+</script>

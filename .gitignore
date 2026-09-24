@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+works/
+.DS_Store
+# личные данные учениц — только на этом компьютере, в GitHub не попадают
+students.json
+usage.json
+ocr
+ai-errors.log

@@ -1,0 +1,6 @@
+flask>=3.1
+anthropic>=0.125
+gigachat
+httpx
+beautifulsoup4
+Pillow

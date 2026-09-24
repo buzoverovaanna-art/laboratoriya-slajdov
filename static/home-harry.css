@@ -1,0 +1,65 @@
+/* Оформление «Harry Potter»: тёмное золото, пергамент, свечи. Картинки — from static/home-harry-*.jpg */
+:root {
+  --bg: #0e0a13; --ink: #f1e4c2; --muted: #c9b98f;
+  --panel: #f1e4c2; --panel-ink: #3b2610; --panel-muted: #6b5330; --panel-line: #c9a227;
+  --panel-shadow: 0 18px 50px rgba(0,0,0,.5);
+  --field-bg: #e8d9ae; --field-line: #b8925a;
+  --accent: #c9a227; --accent-2: #e8c26a; --on-accent: #2a1608; --accent-soft: rgba(201,162,39,.22);
+  --radius: 18px;
+  --font-head: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+}
+body {
+  background: #0e0a13 url('/static/home-harry-hero.jpg') center bottom / cover no-repeat fixed;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,7,15,.55) 0%, rgba(10,7,15,.72) 45%, rgba(10,7,15,.92) 100%);
+}
+.page, .hero { position: relative; z-index: 2; }
+.panel {
+  background: linear-gradient(rgba(241,228,194,.93), rgba(241,228,194,.93)), url('/static/home-harry-parchment.jpg') center / cover no-repeat;
+  border-width: 2px; border-color: var(--panel-line);
+}
+.badge { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--on-accent); font-family: var(--font-head); }
+.go { background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: var(--on-accent); font-family: var(--font-head); letter-spacing: .02em; }
+.hero h1, .step h2 { font-weight: 700; }
+.works a, .del button { color: var(--panel-ink); }
+
+/* шапка на фоне замка */
+.hero { position: relative; max-width: none; margin: 0; padding: clamp(70px, 14vw, 130px) 16px clamp(40px, 8vw, 70px);
+  text-align: center; overflow: hidden; }
+.hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: url('/static/home-harry-parchment.jpg') center top / cover no-repeat;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(10,7,15,.25) 0%, rgba(10,7,15,.55) 55%, rgba(10,7,15,.96) 100%);
+}
+.hero-copy { position: relative; z-index: 2; padding: 0 clamp(0px, 12vw, 140px); animation: up .8s ease both; }
+.label { display: inline-block; padding: 6px 18px; border-radius: 999px; border: 1px solid rgba(201,162,39,.5);
+  background: rgba(201,162,39,.16); color: #f1d98a; font: 700 .78rem var(--font-head); letter-spacing: .18em; text-transform: uppercase; }
+.hero h1 { margin: 18px auto 0; max-width: 12em; color: #f6ecc9; text-shadow: 0 2px 18px rgba(232,194,106,.35), 0 1px 0 rgba(0,0,0,.4);
+  font: 700 clamp(2.1rem, 6.6vw, 3.8rem)/1.08 var(--font-head); }
+.lead { margin: 14px auto 0; max-width: 27em; color: #d9cba0; font-size: clamp(1rem, 2.5vw, 1.16rem); line-height: 1.55; }
+
+/* свечи по бокам шапки */
+.deco { position: absolute; z-index: 2; pointer-events: none; }
+.candle { top: clamp(26px, 6vw, 56px); width: clamp(46px, 8vw, 78px); filter: drop-shadow(0 0 22px rgba(255,196,110,.55)); }
+.candle-l { left: clamp(10px, 5vw, 60px); }
+.candle-r { right: clamp(10px, 5vw, 60px); }
+.flame { transform-origin: 50% 100%; animation: flicker 2.4s ease-in-out infinite; }
+@keyframes flicker { 0%, 100% { transform: scaleY(1) rotate(0deg); opacity: 1; } 30% { transform: scaleY(1.08) rotate(-2deg); } 55% { transform: scaleY(.92) rotate(2deg); opacity: .92; } 80% { transform: scaleY(1.05) rotate(-1deg); } }
+
+/* перо и искры внизу страницы */
+.quill { position: fixed; left: clamp(10px, 3vw, 40px); bottom: clamp(14px, 3vw, 34px); width: clamp(60px, 9vw, 110px); z-index: 1; opacity: .9; }
+.sparkles { position: fixed; right: clamp(10px, 3vw, 40px); bottom: clamp(14px, 3vw, 34px); width: clamp(70px, 11vw, 130px); z-index: 1; }
+.spark { animation: twinkle 2.6s ease-in-out infinite; transform-origin: center; }
+.spark:nth-child(2) { animation-delay: .5s; } .spark:nth-child(3) { animation-delay: 1s; }
+@keyframes twinkle { 0%, 100% { opacity: .35; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.05); } }
+
+@media (max-width: 640px) {
+  .hero-copy { margin-top: clamp(20px, 8vw, 40px); }
+  .candle { top: 16px; width: 44px; }
+  .quill, .sparkles { display: none; }
+}
